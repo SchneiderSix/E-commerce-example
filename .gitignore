@@ -33,3 +33,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# mysql connection credentials
+credentials.ts
+
+# next-auth config file
+process.env.local

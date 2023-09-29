@@ -1,8 +1,19 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Next.js e-commerce example
 
-## Getting Started
+## Table of Contents
 
-First, run the development server:
+- [Introduction](#introduction)
+- [Usage](#usage)
+- [Features](#features)
+- [Contact](#contact)
+
+## Introduction
+
+This is a guide about how to create a simple e-commerce using Next.js, AWS S3, MySQL, NextAuth.js, MySQL, email verification, React and Stripe gateway. This guide is 100% educational, for example auxiliary functions are in the same file where are used for better understanding (in real projects you put all your axuliary functions in the same folder/file) or use another approach for API calls. This e-commerce is supposed to be a simple Business-to-Consumer (B2C). Once completed, I will share a MySQL dump and provide guidance on the structure of the 'credentials.ts' file.
+<br></br>
+<b>Current state: on going</b>
+
+## Usage
 
 ```bash
 npm run dev
@@ -14,25 +25,28 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Features
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+- [x] Limit API calls per minute
+- [x] Validate headers from API calls
+- [x] Implement login
+- [x] Implement header
+- [x] Create account
+- [x] Verificate email
+- [x] Recover account
+- [x] Handle custom authorization via nextauth
+- [x] Create comments on products
+- [x] Send images to AWS S3 Bucket
+- [x] Create product publication
+- [x] Handle user sessions
+- [x] Use stripe gateway
+- [x] Cute logo
+- [ ] Handle products on checkout (almost there)
+- [ ] Search products
+- [ ] Implement products' visualization
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## Contact
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Ask me anything :smiley:
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+[Juan Matias Rossi](https://www.linkedin.com/in/jmrossi6/)
