@@ -46,27 +46,37 @@ export async function POST(
 
   //mysql connection
   const promisePool = pool.promise();
-  const query = "SELECT `db-ticket`.`product`.`quantity`,  `db-ticket`.`product`.`id` FROM `db-ticket`.`product` WHERE `db-ticket`.`product`.`id` IN (?);";
+  const query = "SELECT `db-ticket`.`product`.`quantity`,  `db-ticket`.`product`.`id`, `db-ticket`.`product`.`title` FROM `db-ticket`.`product` WHERE `db-ticket`.`product`.`id` IN (?);";
   const [rows, fields] = await promisePool.query<RowDataPacket[]>(query, [
     productsKeys
   ]);
-  //xxx
+
+  let productNameOutStock: string[] = [];
   rows.map(row => {
     //find values of product by id
-    const productValues = products?.map(product => {if (Object.keys(product)[0] === row.id) return Object.values(product)}).flat();
+    let idx;
+    const productValues = products?.map((product, index) => {if (Object.keys(product)[0] === row.id) {
+      idx = index;
+      return Object.values(product);
+    }}).flat();
+
     if (productValues) {
       //product id found in database
       //check stock
-      if (row.quantity - productValues[0]!.quantity < 0) return NextResponse.json({message: 'Out of stock: '+products![row.id].name}, {status: 409});
+      if (row.quantity - productValues[idx!]!.quantity < 0) productNameOutStock.push(productValues[idx!]?.name as string);
       //fill handle quantity
       handleQuantity.id.push(row.id);
-      handleQuantity.quantity.push(row.quantity - productValues[0]!.quantity);
-      console.log('x: ',handleQuantity!);
+      handleQuantity.quantity.push(row.quantity - productValues[idx!]!.quantity);
+
     } else {
       //product id not found in database
       return NextResponse.json({message: 'Can\'t find products'}, {status: 401});
     }
   });
+  //if out of stock send response
+  if (productNameOutStock?.length) {
+    return NextResponse.json({message: 'Out of stock: '+productNameOutStock.join(', ')}, {status: 409});
+  }
   //create stripe session
   const stripe = new Stripe(myStripeKey, {
     apiVersion: '2022-11-15',
@@ -92,12 +102,12 @@ export async function POST(
       success_url: 'http://localhost:3000/success',
       cancel_url: 'http://localhost:3000/cancel'
     });
+    //conditional parameter allways true for development
     //stripeSession.payment_status === 'paid'
     if (true) {
-      //modify product quantity in db and create ticket
-      //handleQuantity has two arrays: quantity and id
-      //the product share the same index, the idea of this approach
-      //is to force an update for quantity for especific id
+      //handleQuantity consists of two arrays: quantity and id
+      //each product corresponds to the same index in both arrays
+      //this approach updates each product's quantity for a specific id
       let casesToUpdate: string = '';
 
       let casesWhere: string = handleQuantity!.id.map(i => `'${i}'`).join(',');
@@ -112,7 +122,6 @@ export async function POST(
       }
       //mysql connection
       const promisePool = pool.promise();
-      //UPDATE `db-ticket`.`product` SET `quantity` = (CASE WHEN `db-ticket`.`product`.`id` = '1' THEN '66' WHEN `db-ticket`.`product`.`id` = 'lkbott6on8jqgrfn3gpt8kvdngd1gb1u0pclveahitobnqp' THEN '1' END) WHERE `id` IN ('1', 'lkbott6on8jqgrfn3gpt8kvdngd1gb1u0pclveahitobnqp');
       const query = "UPDATE `db-ticket`.`product` SET `quantity` = (CASE "+casesToUpdate+"";
       const [rows, fields] = await promisePool.query<ResultSetHeader>(query);
 
