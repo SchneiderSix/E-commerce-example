@@ -41,9 +41,9 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - [x] Handle user sessions
 - [x] Use stripe gateway
 - [x] Cute logo
-- [ ] Handle products on checkout (almost there)
+- [x] Manage stock at Checkout
 - [ ] Search products
-- [ ] Implement products' visualization
+- [ ] Implement product visualization
 
 ## Contact
 
