@@ -68,7 +68,6 @@ export default function Login() {
   }
 
   const handleAccountCreation = async () => {
-    alert('xxx')
     const result =  async () => {
       const response = await fetch('api/createUser', {
         method: 'POST',
