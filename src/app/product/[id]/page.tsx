@@ -3,6 +3,7 @@ import { originRoute } from "../../../../credentials";
 import Link from "next/link";
 import Foxy from "@/components/Foxy/Foxy";
 import Reply from "@/components/Reply/Reply";
+import Gallery from "@/components/Gallery/Gallery";
 
 interface Comment {
   [user: string] : string;
@@ -39,9 +40,10 @@ export default async function Product({ params }: { params: { id: string } }) {
   };
   const res = await fetchProduct();
   const data: Product = res.message[0];
-  data.comments.map(comment => {
-    console.log(comment[0]);
-  });
+  //for development
+  const imageUrls = ['https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Leafy_Seadragon_on_Kangaroo_Island.jpg/1200px-Leafy_Seadragon_on_Kangaroo_Island.jpg', 'https://www.treehugger.com/thmb/hR_9sTzj9L_WTdrdKH_rZRCmSs4=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/blue-dragon--glaucus-atlanticus--blue-sea-slug-986491702-f0cb140dd639453e8a2d8c56637dce73.jpg', 'https://www.montereybayaquarium.org/globalassets/mba/images/animals/fishes/leafy-sea-dragon-rw09-089.jpg','https://i.natgeofe.com/n/6b009cf8-31cb-4905-8c81-d53c17f2dd72/6213290_2x3.jpg','https://i.natgeofe.com/n/976cca7c-8f1d-46a4-93a9-1f196cb727b9/6203201_square.jpg'];
+  //first image would be the thumbnail so we need the rest
+  //const imageUrls = data.image.slice(1);
 
   return (
     <>
@@ -54,14 +56,15 @@ export default async function Product({ params }: { params: { id: string } }) {
         <div className="container mx-auto p-4">
           <div className="bg-white shadow-md rounded-lg">
             <div className="p-4 sm:flex">
-              <div className="sm:w-1/2">
+              <div className="sm:w-2/3">
+                <Gallery images={imageUrls} />
                 {/*<img
                   src={data.image[0]}
                   alt={data.title}
                   className="w-full h-auto sm:h-96 object-cover"
   />*/}
               </div>
-              <div className="p-4 sm:w-1/2">
+              <div className="p-4 sm:w-1/3">
                 <h2 className="text-2xl font-semibold text-gray-800 mb-2 break-words">
                   {data.title}
                 </h2>
