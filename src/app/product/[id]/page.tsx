@@ -35,7 +35,8 @@ export default async function Product({ params }: { params: { id: string } }) {
       method: 'GET',
       headers: {
         id: id
-      }
+      },
+      cache: 'no-store'
     });
     return response.json();
   };

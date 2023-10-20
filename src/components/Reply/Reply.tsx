@@ -1,6 +1,7 @@
 'use client';
 
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 
 export default function Reply(props: {id:string, commentIdx: number, lastComment: boolean}) {
@@ -8,33 +9,37 @@ export default function Reply(props: {id:string, commentIdx: number, lastComment
   //user session
   const {data: session, status} = useSession();
 
+  const router = useRouter();
+
   const [createComment, setCreateComment] = useState<boolean>(false || props.lastComment);
   const commentRef = useRef<HTMLInputElement>(null);
 
   const sendComment = async () => {
     //call api
     //check if comment is nested
-    const response = props.lastComment ? 
-    await fetch(`${'http://localhost:3000'}/api/createComment/`, {
-      method: 'POST',
-      headers: {
-      id: props.id!,
-      name: session?.user.name!,
-      message: commentRef.current?.value!,
-      nested: 'x'
-      }
-    })
-    :
-    await fetch(`${'http://localhost:3000'}/api/createComment/`, {
-      method: 'POST',
-      headers: {
+    if (session?.user.name) {
+      const response = props.lastComment ? 
+      await fetch(`${window.location.origin}/api/createComment/`, {
+        method: 'POST',
+        headers: {
         id: props.id!,
         name: session?.user.name!,
         message: commentRef.current?.value!,
-        nested: props.commentIdx+''
-      }
-    });
-    return response.json();
+        nested: 'x'
+        }
+      })
+      :
+      await fetch(`${window.location.origin}/api/createComment/`, {
+        method: 'POST',
+        headers: {
+          id: props.id!,
+          name: session?.user.name!,
+          message: commentRef.current?.value!,
+          nested: props.commentIdx+''
+        }
+      });
+      return response.json();
+    }
   };
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
@@ -46,7 +51,8 @@ export default function Reply(props: {id:string, commentIdx: number, lastComment
     const res = await sendComment();
 
     //reset the commentRef
-    commentRef.current!.value = '';
+    //commentRef.current!.value = '';
+    router.refresh();
   };
 
   return (
