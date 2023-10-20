@@ -8,6 +8,7 @@ import {headers} from "next/headers";
 import { NextResponse } from "next/server";
 import { pool } from "../../../../credentials";
 import { ResultSetHeader } from "mysql2";
+import { type } from "os";
 
 //auxiliary - check if product exists
 const checkkIfProductExists = async(id: string) : Promise<boolean> => {
@@ -75,9 +76,9 @@ export async function POST(
     !validator.isEmpty(reqMessage) &&
     !validator.isEmpty(reqNestedMessageIdx) &&
     validator.isAlphanumeric(reqProductId) &&
-    validator.isAlphanumeric(reqUserName) &&
+    typeof reqUserName === 'string' &&
     validator.isAlphanumeric(reqMessage.replace(/[^a-zA-Z0-9]/g, '')) &&
-    validator.isAlphanumeric(reqNestedMessageIdx)
+    typeof reqNestedMessageIdx === 'string'
   ) {
     try {
 
@@ -97,10 +98,10 @@ export async function POST(
         
         //mysql connection
         const promisePool = pool.promise();
-        const query = "UPDATE `db-ticket`.`product` SET `comments` = CASE WHEN `comments` IS NULL THEN JSON_ARRAY(?) ELSE JSON_ARRAY_APPEND(`comments`, '$', ?) END WHERE `db-ticket`.`product`.`id` = ?;";
+        const query = "UPDATE `db-ticket`.`product` SET `comments` = CASE WHEN `comments` IS NULL THEN JSON_ARRAY('{"+currentDate+": [{"+reqUserName+": "+reqMessage+"}]}') ELSE JSON_ARRAY_APPEND(`comments`, '$', '{"+currentDate+": [{"+reqUserName+": "+reqMessage+"}]}') END WHERE `db-ticket`.`product`.`id` = ?;";
         const [rows] = await promisePool.query<ResultSetHeader>(query, [
-          JSON.stringify({ [currentDate]: [{ [reqUserName]: reqMessage }] }),
-          JSON.stringify({ [currentDate]: [{ [reqUserName]: reqMessage }] }),
+          //JSON.stringify({ [currentDate]: [{ [reqUserName]: reqMessage }] }),
+          //JSON.stringify({ [currentDate]: [{ [reqUserName]: reqMessage }] }),
           reqProductId
         ]);
 
@@ -114,10 +115,8 @@ export async function POST(
         
         //mysql connection
         const promisePool = pool.promise();
-        const query = "UPDATE `db-ticket`.`product` SET `comments` = JSON_ARRAY_APPEND(`db-ticket`.`product`.`comments`, '$["+reqNestedMessageIdx+"]', ?) WHERE `db-ticket`.`product`.`id` = ?;";
+        const query = "UPDATE `db-ticket`.`product` SET `comments` = JSON_ARRAY_APPEND(`db-ticket`.`product`.`comments`, '$["+reqNestedMessageIdx+"]', '{"+currentDate+": [{"+reqUserName+": "+reqMessage+"}]}') WHERE `db-ticket`.`product`.`id` = ?;";
         const [rows, fields] = await promisePool.query<ResultSetHeader>(query, [
-          //reqNestedMessageIdx,
-          JSON.stringify({ [currentDate]: [{ [reqUserName]: reqMessage }] }),
           reqProductId
         ]);
 

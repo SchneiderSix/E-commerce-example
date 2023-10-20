@@ -1,15 +1,52 @@
 'use client';
 
+import { useSession } from "next-auth/react";
 import { useRef, useState } from "react";
 
-export default function Reply(props: {nested: boolean, commentIdx: number, lastComment: boolean}) {
+export default function Reply(props: {id:string, commentIdx: number, lastComment: boolean}) {
+
+  //user session
+  const {data: session, status} = useSession();
 
   const [createComment, setCreateComment] = useState<boolean>(false || props.lastComment);
   const commentRef = useRef<HTMLInputElement>(null);
 
+  const sendComment = async () => {
+    //call api
+    //check if comment is nested
+    const response = props.lastComment ? 
+    await fetch(`${'http://localhost:3000'}/api/createComment/`, {
+      method: 'POST',
+      headers: {
+      id: props.id!,
+      name: session?.user.name!,
+      message: commentRef.current?.value!,
+      nested: 'x'
+      }
+    })
+    :
+    await fetch(`${'http://localhost:3000'}/api/createComment/`, {
+      method: 'POST',
+      headers: {
+        id: props.id!,
+        name: session?.user.name!,
+        message: commentRef.current?.value!,
+        nested: props.commentIdx+''
+      }
+    });
+    return response.json();
+  };
+
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
-    setCreateComment(!createComment);
+    //keep showing the last create comment
+    if (!props.lastComment) setCreateComment(!createComment);
+
+    //call api
+    const res = await sendComment();
+
+    //reset the commentRef
+    commentRef.current!.value = '';
   };
 
   return (
@@ -30,7 +67,7 @@ export default function Reply(props: {nested: boolean, commentIdx: number, lastC
             />
             <div className="p-2 flex place-content-between">
               <button 
-              className="bg-[#00AFB9] hover:bg-[#0081A7] text-white font-bold px-2 rounded focus:outline-none focus:shadow-outline"
+              className="bg-[#00AFB9] hover:bg-[#0081A7] text-white font-bold px-2 rounded focus:outline-none focus:shadow-outline flex justify-center"
               type="submit">
                 {props.lastComment ? 'Create comment' : 'Create reply'}
               </button>

@@ -4,13 +4,14 @@ import Link from "next/link";
 import Foxy from "@/components/Foxy/Foxy";
 import Reply from "@/components/Reply/Reply";
 import Gallery from "@/components/Gallery/Gallery";
+import Cart from "@/components/Cart/Cart";
 
 interface Comment {
   [user: string] : string;
 }
 
 interface Comments {
-  [commentId: number]: Comment[] | Comment; // Mapping comment IDs to arrays of Comment objects
+  [commentDate: number]: Comment[] | Comment; // Mapping comment IDs to arrays of Comment objects
 }
 
 interface Product {
@@ -40,6 +41,7 @@ export default async function Product({ params }: { params: { id: string } }) {
   };
   const res = await fetchProduct();
   const data: Product = res.message[0];
+
   //for development
   const imageUrls = ['https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Leafy_Seadragon_on_Kangaroo_Island.jpg/1200px-Leafy_Seadragon_on_Kangaroo_Island.jpg', 'https://www.treehugger.com/thmb/hR_9sTzj9L_WTdrdKH_rZRCmSs4=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/blue-dragon--glaucus-atlanticus--blue-sea-slug-986491702-f0cb140dd639453e8a2d8c56637dce73.jpg', 'https://www.montereybayaquarium.org/globalassets/mba/images/animals/fishes/leafy-sea-dragon-rw09-089.jpg','https://i.natgeofe.com/n/6b009cf8-31cb-4905-8c81-d53c17f2dd72/6213290_2x3.jpg','https://i.natgeofe.com/n/976cca7c-8f1d-46a4-93a9-1f196cb727b9/6203201_square.jpg'];
   //first image would be the thumbnail so we need the rest
@@ -76,48 +78,54 @@ export default async function Product({ params }: { params: { id: string } }) {
               </div>
             </div>
           </div>
-          <div className="mt-6 bg-white shadow-md rounded-lg w-1/2 p-5">
-            <h3 className="text-xl font-semibold text-gray-800">Comments</h3>
-            <ul className="mt-4 space-y-2">
-              {data.comments.map((comment, index) => (
-                Array.isArray(comment) ? (
-                  //nested comments
-                  <ul key={index}>
-                    {comment.map((subComment, subIndex) => (
-                      subIndex === 0 ?
-                      //first comment
-                      <p key={subIndex} className="py-2 text-gray-600">
-                        {(subComment as string).substring(6, subComment.length - 3)}
-                      </p> :
-                      //replies
-                      <>
-                        <li key={subIndex} className="text-gray-600 break-words mx-10">
-                          {(subComment as string).substring(6, subComment.length - 3)}
-                        </li>
-                        {subIndex === comment.length - 1 ? 
-                        //reply component
-                        <Reply nested={true} commentIdx={subIndex} lastComment={false} />
-                        : ''}
-                      </>
-                    ))}
-                  </ul>
-                ) : (
-                  //normal comments
-                  <>
-                    <p key={(comment as string).substring(1,2)} className="py-2 text-gray-600">
-                      {(comment as string).substring(6, comment.length - 3)}
-                    </p>
-                    <Reply nested={false} commentIdx={index} lastComment={false} />
-                  </>
-                )
-              ))}
-              <Reply nested={false} commentIdx={0} lastComment={true} />
-              {/*Object.keys(data.comments).map((commentId) => (
-                <li key={commentId} className="text-gray-600">
-                  {commentId}
-                </li>
-              ))*/}
-            </ul>
+          <div className="flex space-x-4">
+            <div className="mt-6 bg-white shadow-md rounded-lg w-1/2 p-5">
+              <h3 className="text-xl font-semibold text-gray-800">Comments</h3>
+              <ul className="mt-4 space-y-2">
+                {data.comments && data.comments.map((comment, index) => (
+                  Array.isArray(comment) ? (
+                    //nested comments
+                    <ul key={index}>
+                      {comment.map((subComment, subIndex) => (
+                        subIndex === 0 ?
+                        //first comment
+                        <p key={subIndex} className="py-2 text-gray-600">
+                          {subComment.substring(18, subComment.length - 3)}
+                          <br></br>
+                          {new Date(parseInt(subComment.substring(1, 14))).toLocaleString()}
+                        </p> :
+                        //replies
+                        <>
+                          <li key={subIndex} className="text-gray-600 break-words mx-10">
+                            {subComment.substring(18, subComment.length - 3)}
+                            <br></br>
+                            {new Date(parseInt(subComment.substring(1, 14))).toLocaleString()}
+                          </li>
+                          {subIndex === comment.length - 1 ? 
+                          //reply component
+                          <Reply id={data.id} commentIdx={index} lastComment={false} />
+                          : ''}
+                        </>
+                      ))}
+                    </ul>
+                  ) : (
+                    //normal comments
+                    <>
+                      <p key={(comment as string).substring(1,2)} className="py-2 text-gray-600">
+                        {comment.substring(18, comment.length - 3)}
+                        <br></br>
+                        {new Date(parseInt(comment.substring(1, 14))).toLocaleString()}
+                      </p>
+                      <Reply id={data.id} commentIdx={index} lastComment={false} />
+                    </>
+                  )
+                ))}
+                <Reply id={data.id} commentIdx={0} lastComment={true} />
+              </ul>
+            </div>
+            <div className="mt-6 bg-white shadow-md rounded-lg w-1/2 p-5">
+              <Cart />
+            </div>
           </div>
         </div>
       </div>
