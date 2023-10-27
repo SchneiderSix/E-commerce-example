@@ -1,7 +1,7 @@
 'use client';
 
 import { useSession } from "next-auth/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 //custom interface for product
 interface Product { 
@@ -26,10 +26,27 @@ export default function Cart(props: {currentProduct: Product}) {
   //render current shoplist
   const [st, setSt] = useState<boolean>(false);
 
+  //total cost
+  const [total, setTotal] = useState<number>(0);
+
+  //change total price at the beggining and when st (state for shoplist) changes 
+  useEffect(()=> {
+    if (session?.user.shopList) {
+      let total =0;
+      session.user.shopList.forEach((i) => {
+        total += Object.values(i)[0].price * Object.values(i)[0].quantity;
+      });
+      setTotal(total);
+    }
+  }, [session?.user.shopList, st]);
+
+
+
   //add item to shoplist
   const handleProduct = async () => {
     //handle empty quantity
     if (parseInt(quantityRef.current?.value as string) > 0 && parseInt(quantityRef.current?.value as string) <= props.currentProduct[productId].quantity) {
+
       const lastProduct: Product = {
         [productId]: {
           name: props.currentProduct[productId].name,
@@ -98,12 +115,15 @@ export default function Cart(props: {currentProduct: Product}) {
             </label>
             <ul className="mt-4 space-y-2">
               {session.user.shopList && session.user.shopList.map((i) =>  (
-                <li
-                key={Object.keys(i)[0]}
-                className="py-2 text-gray-600"
-                >
-                  {Object.values(i)[0].quantity} {Object.values(i)[0].name} : ${Object.values(i)[0].price * Object.values(i)[0].quantity}
-                </li>
+                <>
+                  <li
+                  key={Object.keys(i)[0]}
+                  className="py-2 text-gray-600"
+                  >
+                    {Object.values(i)[0].quantity} {Object.values(i)[0].name} : ${Object.values(i)[0].price * Object.values(i)[0].quantity}
+                  </li>
+                </>
+                
               ))}
             </ul>
             <input
@@ -118,10 +138,15 @@ export default function Cart(props: {currentProduct: Product}) {
             </input>
             <button 
             onClick={handleProduct}
-            className="w-3/4 bg-[#00AFB9] hover:bg-[#0081A7] text-white font-bold py-2 rounded focus:outline-none focus:shadow-outline w-full shadow-lg"
+            className="my-2 w-3/4 bg-[#00AFB9] hover:bg-[#0081A7] text-white font-bold py-2 rounded focus:outline-none focus:shadow-outline w-full shadow-lg"
             >
               Add to cart or change product quantity
             </button>
+            <label
+            className="text-l font-semibold text-[#00AFB9] shadow-lg shadow-cyan-500/50"
+            >
+              Total: ${total}
+            </label>
             <button
             className=" bg-[#00AFB9] hover:bg-[#0081A7] text-white font-bold py-3 my-4 rounded focus:outline-none focus:shadow-outline w-full shadow-lg shadow-cyan-500/50"
             onClick={handleCheckout}

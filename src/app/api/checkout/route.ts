@@ -102,6 +102,7 @@ export async function POST(
       success_url: 'http://localhost:3000/success',
       cancel_url: 'http://localhost:3000/cancel'
     });
+    console.log(stripeSession);
     //send stripe checkout url
     //NextResponse.json({message: stripeSession.url});
 
