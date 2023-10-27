@@ -1,10 +1,10 @@
 import { useSession } from "next-auth/react";
-import { originRoute } from "../../../../credentials";
 import Link from "next/link";
 import Foxy from "@/components/Foxy/Foxy";
 import Reply from "@/components/Reply/Reply";
 import Gallery from "@/components/Gallery/Gallery";
 import Cart from "@/components/Cart/Cart";
+import { headers } from "next/headers";
 
 interface Comment {
   [user: string] : string;
@@ -30,8 +30,11 @@ export default async function Product({ params }: { params: { id: string } }) {
   const fetchProduct = async () => {
     //id from route
     const id = params.id;
+    //origin path
+    const originPathname = 'http://'+headers().get("x-forwarded-host") || "";
+
     //call api
-    const response = await fetch(`${originRoute}/api/product/`, {
+    const response = await fetch(`${originPathname}/api/product/`, {
       method: 'GET',
       headers: {
         id: id
@@ -42,6 +45,13 @@ export default async function Product({ params }: { params: { id: string } }) {
   };
   const res = await fetchProduct();
   const data: Product = res.message[0];
+  const currentProduct = {
+    [data.id]: {
+      name: data.title,
+      price: data.price,
+      quantity: data.quantity,
+    }
+  };
 
   //for development
   const imageUrls = ['https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Leafy_Seadragon_on_Kangaroo_Island.jpg/1200px-Leafy_Seadragon_on_Kangaroo_Island.jpg', 'https://www.treehugger.com/thmb/hR_9sTzj9L_WTdrdKH_rZRCmSs4=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/blue-dragon--glaucus-atlanticus--blue-sea-slug-986491702-f0cb140dd639453e8a2d8c56637dce73.jpg', 'https://www.montereybayaquarium.org/globalassets/mba/images/animals/fishes/leafy-sea-dragon-rw09-089.jpg','https://i.natgeofe.com/n/6b009cf8-31cb-4905-8c81-d53c17f2dd72/6213290_2x3.jpg','https://i.natgeofe.com/n/976cca7c-8f1d-46a4-93a9-1f196cb727b9/6203201_square.jpg'];
@@ -79,8 +89,8 @@ export default async function Product({ params }: { params: { id: string } }) {
               </div>
             </div>
           </div>
-          <div className="flex space-x-4">
-            <div className="mt-6 bg-white shadow-md rounded-lg w-1/2 p-5">
+          <div className="flex space-x-4 justify-center">
+            <div className="mt-6 bg-white shadow-md rounded-lg w-1/3 p-5">
               <h3 className="text-xl font-semibold text-gray-800">Comments</h3>
               <ul className="mt-4 space-y-2">
                 {data.comments && data.comments.map((comment, index) => (
@@ -122,10 +132,11 @@ export default async function Product({ params }: { params: { id: string } }) {
                   )
                 ))}
                 <Reply id={data.id} commentIdx={0} lastComment={true} />
+                <br></br>
               </ul>
             </div>
-            <div className="mt-6 bg-white shadow-md rounded-lg w-1/2 p-5">
-              <Cart />
+            <div className="flex w-1/3 mt-6 place-self-center">
+              <Cart currentProduct={currentProduct} />
             </div>
           </div>
         </div>

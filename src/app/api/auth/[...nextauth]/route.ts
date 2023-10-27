@@ -78,7 +78,7 @@ const handler = NextAuth({
 
         //if password comparation is true
         //save the user id into email property from User interface
-        return passMatched ? {userId: user.id, name: user.name} as User: null;
+        return passMatched ? {id: user.id, name: user.name, email: user.email, } as User: null;
        } else {
         return null;
        }
@@ -90,6 +90,34 @@ const handler = NextAuth({
     maxAge: 60 * 60 * 24 * 2, // Maximum session age in seconds
     updateAge: 60 * 60, // Session update age in seconds
   },
+  callbacks: {
+    async jwt({token, user, trigger, session}) {
+      if (trigger === 'update') {
+        token.shopList = session.user.shopList;
+        return token;
+      }
+      if (user) {
+        return {
+          ...token,
+          name: user.name,
+          email: user.email,
+          shopList: user.shopList
+        }
+      }
+      return token;
+    },
+    session({session, token, user}) {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          shopList: token.shopList
+        }
+      }
+
+      return session;
+    },
+  }
   //hide token from browser
   /*
   cookies: {

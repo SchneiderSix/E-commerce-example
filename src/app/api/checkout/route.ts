@@ -95,13 +95,16 @@ export async function POST(
       },
       quantity: i[key].quantity,
     }});
-
+    
     const stripeSession = await stripe.checkout.sessions.create({
       line_items: items,
       mode: 'payment',
       success_url: 'http://localhost:3000/success',
       cancel_url: 'http://localhost:3000/cancel'
     });
+    //send stripe checkout url
+    //NextResponse.json({message: stripeSession.url});
+
     //conditional parameter allways true for development
     //stripeSession.payment_status === 'paid'
     if (true) {

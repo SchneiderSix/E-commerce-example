@@ -10,7 +10,7 @@ export default function Gallery(props: {images: string[]}) {
   return (
     <>
       <div className="flex justify-center">
-        <img className={!zoom ? "rounded-md max-w-screen-sm max-h-96" : "ease-in-out duration-300"} src={props.images[selected]} alt={""+selected} 
+        <img className={!zoom ? "rounded-md  max-h-96" : "ease-in-out duration-300"} src={props.images[selected]} alt={""+selected} 
         onClick={(e) => setZoom(!zoom)}
         />
       </div>
