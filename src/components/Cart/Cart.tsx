@@ -98,8 +98,9 @@ export default function Cart(props: {currentProduct: Product}) {
   //handle checkout
   const handleCheckout = async() => {
     const res = await sendCheckoutRequest();
-    if (res.ok) {
-      //handle stripe
+    if (res.status !== 401 || res.status !== 409 || res.status !== 500) {
+      //handle stripe payment url
+      window.open(res.message, '_blank');
     }
   }
 
@@ -115,15 +116,12 @@ export default function Cart(props: {currentProduct: Product}) {
             </label>
             <ul className="mt-4 space-y-2">
               {session.user.shopList && session.user.shopList.map((i) =>  (
-                <>
-                  <li
+                <li
                   key={Object.keys(i)[0]}
                   className="py-2 text-gray-600"
                   >
                     {Object.values(i)[0].quantity} {Object.values(i)[0].name} : ${Object.values(i)[0].price * Object.values(i)[0].quantity}
-                  </li>
-                </>
-                
+                </li>
               ))}
             </ul>
             <input

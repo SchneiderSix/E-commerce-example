@@ -100,41 +100,16 @@ export async function POST(
       line_items: items,
       mode: 'payment',
       success_url: 'http://localhost:3000/success',
-      cancel_url: 'http://localhost:3000/cancel'
+      //cancel_url: 'http://localhost:3000/cancel',
+      //add handleQuantity into stripe session metadata
+      //this will be needed to change products quantity in the database
+      metadata: {
+        handleQuantity: JSON.stringify(handleQuantity)
+      }
     });
-    console.log(stripeSession);
     //send stripe checkout url
-    //NextResponse.json({message: stripeSession.url});
+    return NextResponse.json({ message: stripeSession.url }, { status: 200 })
 
-    //conditional parameter allways true for development
-    //stripeSession.payment_status === 'paid'
-    if (true) {
-      //handleQuantity consists of two arrays: quantity and id
-      //each product corresponds to the same index in both arrays
-      //this approach updates each product's quantity for a specific id
-      let casesToUpdate: string = '';
-
-      let casesWhere: string = handleQuantity!.id.map(i => `'${i}'`).join(',');
-
-      for (let i = 0; i < handleQuantity!.id.length; i++) {
-        //handle last case to inject casesWhere for last clause
-        if(i === handleQuantity!.id.length - 1) {
-          casesToUpdate += "WHEN `db-ticket`.`product`.`id` = '"+handleQuantity!.id[i]+"' THEN '"+handleQuantity!.quantity[i]+"' END) WHERE `id` IN ("+casesWhere+");";
-        } else {
-          casesToUpdate += "WHEN `db-ticket`.`product`.`id` = '"+handleQuantity!.id[i]+"' THEN '"+handleQuantity!.quantity[i]+"' ";
-        }
-      }
-      //mysql connection
-      const promisePool = pool.promise();
-      const query = "UPDATE `db-ticket`.`product` SET `quantity` = (CASE "+casesToUpdate+"";
-      const [rows, fields] = await promisePool.query<ResultSetHeader>(query);
-
-      if (rows.affectedRows > 0) {
-        return NextResponse.json({message: 'Caching!'}, {status: 200});
-      } else {
-        return NextResponse.json({message: 'Error'}, {status: 409});
-      }
-    }
   } catch (error) {
     console.error(error);
     return NextResponse.json({message: 'Internal server error'}, {status: 500});
