@@ -29,6 +29,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 - [x] Limit API calls per minute
 - [x] Validate headers from API calls
+- [x] Hash passwords and secure user input
 - [x] Implement login
 - [x] Implement header
 - [x] Create account
