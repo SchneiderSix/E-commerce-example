@@ -42,8 +42,14 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - [x] Use stripe gateway
 - [x] Cute logo
 - [x] Manage stock at Checkout
+- [x] Implement product visualization
+- [x] Proper transaction
+- [x] Webhook handling for stripe session completion
+- [x] Implement session handling for the shopping cart
+- [ ] Create checkout completion page
+- [ ] Create account validation page
 - [ ] Search products
-- [ ] Implement product visualization
+- [ ] Implement admin privileges
 
 ## Contact
 
