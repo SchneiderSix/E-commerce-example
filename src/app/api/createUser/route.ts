@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import  {  ResultSetHeader } from 'mysql2';
-import { pool, myEmail } from '../../../../credentials';
+import { pool, myEmail, originRoute } from '../../../../credentials';
 import { hashSync } from 'bcrypt';
 import {RateLimiter } from 'limiter';
 import {uid} from 'uid/single';
@@ -19,7 +19,7 @@ const sendEmail = async(token: string, emailTo: string) => {
     }
   });
   //url
-  const siteUrl = `http://localhost:3000/verificate/${token}`;
+  const siteUrl = originRoute+`/verificate/${token}`;
   const mailOptions = {
     from: myEmail.user,
     to: emailTo,

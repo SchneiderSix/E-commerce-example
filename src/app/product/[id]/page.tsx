@@ -31,7 +31,7 @@ export default async function Product({ params }: { params: { id: string } }) {
     //id from route
     const id = params.id;
     //origin path
-    const originPathname = 'http://'+headers().get("x-forwarded-host") || "";
+    const originPathname = 'http://'+headers().get("x-forwarded-host");
 
     //call api
     const response = await fetch(`${originPathname}/api/product/`, {
