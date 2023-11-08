@@ -2,8 +2,9 @@ import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import cart from "../../../public/shopping-cart.png";
 import cart2 from "../../../public/shopping-cart2.png";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Foxy from "../Foxy/Foxy";
+import Cart from "../Cart/Cart";
 
 
 export default function Header() {
@@ -11,6 +12,8 @@ export default function Header() {
   const {data: session, status} = useSession();
   //searchTerm ref
   const searchTerm = useRef<HTMLInputElement>(null);
+  //state for cart
+  const [showCart, setShowcart] = useState<boolean>(false);
   return (
     <>
       <div className="flex justify-center space-x-20 absolute mx-auto w-4/5 inset-x-0 left-/2 top-10 bg-white rounded-full px-7 overflow-hidden">
@@ -25,8 +28,10 @@ export default function Header() {
         ref={searchTerm}
         />
         <h1 className="m-2 inline-block align-middle text-black text-2xl font-bold">{session?.user.name}</h1>
-        {session?.user.shopList?.length ? 
-        <Image className="m-2 hover:bg-[#0081A7] hover:rounded-md"/*absolute inset-y-0 right-0*/ color="" alt="shopping-cart" width={70} height={20} src={cart2}/> : 
+        {session?.user.shoppingList?.length ? 
+        <Image onClick={(e) => {
+          setShowcart(!showCart)
+        }} className="m-2 hover:bg-[#0081A7] hover:rounded-md"/*absolute inset-y-0 right-0*/ color="" alt="shopping-cart" width={70} height={20} src={cart2}/> : 
         <Image className="m-2"/*absolute inset-y-0 right-0*/  color="" alt="shopping-cart2" width={70} height={20} src={cart}/>}
         <button 
         className="bg-[#00AFB9] hover:bg-[#0081A7] text-white font-bold rounded focus:outline-none focus:shadow-outline w-1/6 my-auto shadow-lg shadow-cyan-500/50"
@@ -36,6 +41,13 @@ export default function Header() {
           Logout
         </button>
       </div>
+      {showCart && (
+          <div
+          className="dropdown absolute transform translate-y-0 transition-transform ease-in-out duration-300"
+          >
+            <Cart />
+          </div>
+        )}
     </>
   )
 }

@@ -50,8 +50,7 @@ export default function Reply(props: {id:string, commentIdx: number, lastComment
     //call api
     const res = await sendComment();
 
-    //reset the commentRef
-    //commentRef.current!.value = '';
+    //reload new replies
     router.refresh();
   };
 

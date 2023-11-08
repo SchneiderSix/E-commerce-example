@@ -1,6 +1,7 @@
 import Stripe from "stripe";
 import { NextRequest, NextResponse } from "next/server";
-import { myEmail, myStripeKey, pool, authOptions } from "../../../../../credentials";
+import { myEmail, myStripeKey, pool } from "../../../../../credentials";
+import {authOptions} from "../../../../auth";
 import { headers } from "next/headers";
 import { ResultSetHeader } from "mysql2";
 import { getServerSession } from "next-auth/next";

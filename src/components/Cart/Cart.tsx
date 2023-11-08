@@ -12,7 +12,7 @@ interface Product {
   }
 }
 
-export default function Cart(props: {currentProduct: Product}) {
+export default function Cart(props: {currentProduct?: Product}) {
   
   //user session
   const {data: session, status, update} = useSession();
@@ -21,7 +21,7 @@ export default function Cart(props: {currentProduct: Product}) {
   const quantityRef = useRef<HTMLInputElement>(null);
 
   //productid
-  const productId = Object.keys(props.currentProduct)[0];
+  const productId = props.currentProduct ? Object.keys(props.currentProduct)[0] : '';
   
   //render current shoplist
   const [st, setSt] = useState<boolean>(false);
@@ -31,21 +31,21 @@ export default function Cart(props: {currentProduct: Product}) {
 
   //change total price at the beggining and when st (state for shoplist) changes 
   useEffect(()=> {
-    if (session?.user.shopList) {
+    if (session?.user.shoppingList) {
       let total =0;
-      session.user.shopList.forEach((i) => {
+      session.user.shoppingList.forEach((i) => {
         total += Object.values(i)[0].price * Object.values(i)[0].quantity;
       });
       setTotal(total);
     }
-  }, [session?.user.shopList, st]);
+  }, [session?.user.shoppingList, st]);
 
 
 
   //add item to shoplist
   const handleProduct = async () => {
     //handle empty quantity
-    if (parseInt(quantityRef.current?.value as string) > 0 && parseInt(quantityRef.current?.value as string) <= props.currentProduct[productId].quantity) {
+    if (props.currentProduct && parseInt(quantityRef.current?.value as string) > 0 && parseInt(quantityRef.current?.value as string) <= props.currentProduct[productId].quantity) {
 
       const lastProduct: Product = {
         [productId]: {
@@ -55,9 +55,9 @@ export default function Cart(props: {currentProduct: Product}) {
         }
       }
       
-      if (session?.user.shopList) {
+      if (session?.user.shoppingList) {
         //change product quantity if it's already in shoplist
-        const updatedShopList = session!.user.shopList.map((product) => {
+        const updatedshoppingList = session!.user.shoppingList.map((product) => {
           if (Object.keys(product)[0] === productId) {
             Object.values(product)[0].quantity = parseInt(quantityRef.current?.value as string);
           }
@@ -67,7 +67,7 @@ export default function Cart(props: {currentProduct: Product}) {
           ...session,
           user: {
             ...session!.user,
-            shopList: updatedShopList
+            shoppingList: updatedshoppingList
           }
         });
       } else {
@@ -75,7 +75,7 @@ export default function Cart(props: {currentProduct: Product}) {
           ...session,
           user: {
             ...session!.user,
-            shopList: [lastProduct]
+            shoppingList: [lastProduct]
           }
         });
       }
@@ -85,11 +85,11 @@ export default function Cart(props: {currentProduct: Product}) {
   }
   const sendCheckoutRequest = async() => {
     //call api
-    if (session?.user.shopList !== undefined) {
+    if (session?.user.shoppingList !== undefined) {
       const response = await fetch(`${window.location.origin}/api/checkout`, {
         method: 'POST',
         headers: {
-          products: JSON.stringify(session?.user.shopList)
+          products: JSON.stringify(session?.user.shoppingList)
         }
       });
       return response.json();
@@ -115,7 +115,7 @@ export default function Cart(props: {currentProduct: Product}) {
               Shopping cart
             </label>
             <ul className="mt-4 space-y-2">
-              {session.user.shopList && session.user.shopList.map((i) =>  (
+              {session.user.shoppingList && session.user.shoppingList.map((i) =>  (
                 <li
                   key={Object.keys(i)[0]}
                   className="py-2 text-gray-600"
@@ -124,22 +124,26 @@ export default function Cart(props: {currentProduct: Product}) {
                 </li>
               ))}
             </ul>
-            <input
-            placeholder="Quantity"
-            type="number"
-            min={1}
-            ref={quantityRef}
-            max={props.currentProduct[productId].quantity}
-            className="w-1/4 text-center my-2 p-1 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400
-            focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
-            >
-            </input>
-            <button 
-            onClick={handleProduct}
-            className="my-2 w-3/4 bg-[#00AFB9] hover:bg-[#0081A7] text-white font-bold py-2 rounded focus:outline-none focus:shadow-outline w-full shadow-lg"
-            >
-              Add to cart or change product quantity
-            </button>
+            {props.currentProduct && (
+              <>
+              <input
+              placeholder="Quantity"
+              type="number"
+              min={1}
+              ref={quantityRef}
+              max={props.currentProduct[productId].quantity}
+              className="w-1/4 text-center my-2 p-1 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400
+              focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+              >
+              </input>
+              <button 
+              onClick={handleProduct}
+              className="my-2 w-3/4 bg-[#00AFB9] hover:bg-[#0081A7] text-white font-bold py-2 rounded focus:outline-none focus:shadow-outline w-full shadow-lg"
+              >
+                Add to cart or change product quantity
+              </button>
+              </>
+            )}
             <label
             className="text-l font-semibold text-[#00AFB9] shadow-lg shadow-cyan-500/50"
             >
@@ -153,9 +157,8 @@ export default function Cart(props: {currentProduct: Product}) {
             </button>
           </div>
           
-        )
-        : (
-          ''
+        ) : (
+        ''
         )}
       </>
     </>

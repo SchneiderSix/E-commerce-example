@@ -10,7 +10,7 @@ interface Product {
 }
 
 interface CustomUser extends DefaultUser {
-  shopList: Product[];
+  shoppingList: Product[];
 }
 
 declare module 'next-auth' {

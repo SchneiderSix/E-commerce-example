@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { myStripeKey, pool } from "../../../../credentials";
+import { myStripeKey, originRoute, pool } from "../../../../credentials";
 import Stripe from "stripe";
 import { ResultSetHeader, RowDataPacket } from "mysql2";
+import { headers } from "next/headers";
 
 //custom interface for product
 interface Product { 
@@ -99,7 +100,7 @@ export async function POST(
     const stripeSession = await stripe.checkout.sessions.create({
       line_items: items,
       mode: 'payment',
-      success_url: 'http://localhost:3000/success',
+      success_url: 'http://' + headers().get('x-forwarded-host') + '/success',
       //cancel_url: 'http://localhost:3000/cancel',
       //add handleQuantity into stripe session metadata
       //this will be needed to change products quantity in the database

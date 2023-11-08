@@ -1,4 +1,3 @@
-import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Foxy from "@/components/Foxy/Foxy";
 import Reply from "@/components/Reply/Reply";
