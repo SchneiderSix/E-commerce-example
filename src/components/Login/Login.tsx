@@ -50,7 +50,7 @@ export default function Login() {
       popMessage.current='Invalid credentials'; 
       setOpen(true);
     } else if (forgottenAcc){
-      //recover password
+      //refresh token
       const result = async () => {
         const response = await fetch('api/recoverUser', {
           method: 'POST',

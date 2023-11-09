@@ -2,9 +2,9 @@ import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import cart from "../../../public/shopping-cart.png";
 import cart2 from "../../../public/shopping-cart2.png";
-import { useRef, useState } from "react";
+import { useRef, useState, lazy } from "react";
 import Foxy from "../Foxy/Foxy";
-import Cart from "../Cart/Cart";
+const Cart = lazy(() => import("../Cart/Cart"));
 
 
 export default function Header() {
