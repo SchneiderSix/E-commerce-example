@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import  {  ResultSetHeader } from 'mysql2';
-import { pool, myEmail, originRoute } from '../../../../credentials';
+import { pool, myEmail } from '../../../../credentials';
 import { hashSync } from 'bcrypt';
 import {RateLimiter } from 'limiter';
 import {uid} from 'uid/single';
@@ -19,12 +19,12 @@ const sendEmail = async(token: string, emailTo: string) => {
     }
   });
   //url
-  const siteUrl = originRoute+`/verificate/${token}`;
+  const siteUrl = 'http://' + headers().get('x-forwarded-host') +`/verificate/${token}`;
   const mailOptions = {
     from: myEmail.user,
     to: emailTo,
     subject: 'Verificate account',
-    text: 'This is your token: '+token+'\nUse it here: '+siteUrl
+    text: 'This is your token: '+token+'\n Click here: '+siteUrl
   };
   transporter.sendMail(mailOptions, function(err: unknown, info: unknown){
     return err ? false : true;

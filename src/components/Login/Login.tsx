@@ -67,24 +67,6 @@ export default function Login() {
     }
   }
 
-  const handleAccountCreation = async () => {
-    const result =  async () => {
-      const response = await fetch('api/createUser', {
-        method: 'POST',
-        headers: {
-          email: email.current!.value,
-          pass: password.current!.value,
-          name: name.current!.value
-        }
-      });
-      return response.json();
-    }
-    result().then((res) => {
-      popMessage.current=JSON.stringify(res.message).substring(1, res.message.length+1);
-      setOpen(true);
-    });
-  }
-
   return (
     <div className="flex justify-center items-center h-screen">
       <div className="px-8 py-6 space-x-1">
@@ -148,7 +130,7 @@ export default function Login() {
               className="bg-[#00AFB9] hover:bg-[#0081A7] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full shadow-lg shadow-cyan-500/50"
               type="submit"
             >
-              {createAccount ? 'New account' : !forgottenAcc ? 'Login' : 'Recover account'}
+              {createAccount ? 'New account' : !forgottenAcc ? 'Login' : 'Refresh token'}
             </button>
           </div>
           <div className="flex items-center justify-between">

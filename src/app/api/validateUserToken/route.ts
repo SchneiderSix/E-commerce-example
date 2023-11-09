@@ -17,9 +17,10 @@ const checkTokenDate = async (email: string, token: string): Promise<boolean> =>
     ]);
 
     const tokenDate = rows[0].token.token[1];
+    const tokenDB = rows[0].token.token[0];
   
     //if token exists check date, if not exists resolve true
-    if (tokenDate === token) {
+    if (tokenDB === token) {
       const today = new Date().getTime();
       tokenDate > today ? resolve(false) : resolve(true);
     } else {

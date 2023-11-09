@@ -91,7 +91,7 @@ export async function POST(
           let message = '';
           let total = 0;
           //add every item
-          session.user.shopList.map((i) => {
+          session.user.shoppingList.map((i) => {
             message+`${Object.values(i)[0].quantity} ${Object.values(i)[0].name}: ${Object.values(i)[0].price * Object.values(i)[0].quantity}\n`;
             total += Object.values(i)[0].price * Object.values(i)[0].quantity;
           });

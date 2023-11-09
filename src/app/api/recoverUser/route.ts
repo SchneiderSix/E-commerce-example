@@ -17,7 +17,7 @@ const sendEmail = async(token: string, emailTo: string) => {
     }
   });
   //url
-  const siteUrl = `http://localhost:3000/recover/${token}`;
+  const siteUrl = 'http://' + headers().get('x-forwarded-host') +`/verificate/${token}`;
   const mailOptions = {
     from: myEmail.user,
     to: emailTo,
