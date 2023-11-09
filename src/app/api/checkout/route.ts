@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
-import { myStripeKey, originRoute, pool } from "../../../../credentials";
+import { myStripeKey, pool } from "../../../../credentials";
 import Stripe from "stripe";
-import { ResultSetHeader, RowDataPacket } from "mysql2";
+import { RowDataPacket } from "mysql2";
 import { headers } from "next/headers";
+import { RateLimiter } from "limiter";
 
 //custom interface for product
 interface Product { 
@@ -19,10 +20,20 @@ interface OrganizeQuantity {
   quantity: number[]
 }
 
+//set rate limit
+const rateLimiter = new RateLimiter({
+  tokensPerInterval: 1, //max tokens per interval
+  interval: 'second'  //time
+})
+
 
 export async function POST(
   req: Request
 ) {
+  //check rate
+  if (!rateLimiter.tryRemoveTokens(1)){
+    return NextResponse.json({message: 'Too many requests'}, {status: 429});
+  }
 
   //products
   let products: Product[] | null = null;

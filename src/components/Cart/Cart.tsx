@@ -98,7 +98,7 @@ export default function Cart(props: {currentProduct?: Product}) {
   //handle checkout
   const handleCheckout = async() => {
     const res = await sendCheckoutRequest();
-    if (res.status !== 401 || res.status !== 409 || res.status !== 500) {
+    if (res.message !== 'Too many requests' && (res.status !== 401 || res.status !== 409 || res.status !== 500 || res.status !== 429)) {
       //handle stripe payment url
       window.open(res.message, '_blank');
     }
