@@ -1,8 +1,8 @@
-'use client'
+'use client';
 import { Metadata } from 'next'
-import { Pulsar } from '@uiball/loaders'
-import { Suspense, lazy, useEffect, useState } from 'react'
-import { useSession, signOut } from 'next-auth/react'
+import { lazy, useEffect, useState } from 'react'
+import { useSession } from 'next-auth/react';
+import { Pulsar } from '@uiball/loaders';
 const Login = lazy(() => import('../components/Login/Login'));
 const Main = lazy(() => import('../components/Main/Main'));
 
@@ -31,16 +31,10 @@ export default function Home() {
       <div className='flex items-center justify-center h-screen'>
         <Pulsar size={80} speed={1.75} color="black" />
       </div>
-    ) : !session ? (
-      <Suspense fallback={
-        <div className='flex items-center justify-center h-screen'>
-          <Pulsar size={80} speed={1.75} color="black" />
-        </div>
-      }>
-        <Login />
-      </Suspense>
-    ) : (
+    ) : session ? (
       <Main />
+    ) : (
+      <Login />
     )}
   </>
   )

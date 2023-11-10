@@ -1,3 +1,4 @@
+'use client';
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import cart from "../../../public/shopping-cart.png";

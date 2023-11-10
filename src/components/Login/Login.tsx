@@ -1,7 +1,7 @@
-import Link from "next/link"
+'use client';
 import Fox from "../Fox/Fox"
 import Popup from "../Popup/Popup";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { signIn, useSession } from "next-auth/react";
 
 export default function Login() {
@@ -47,8 +47,8 @@ export default function Login() {
         redirect: false
       });
       //open popup
-      popMessage.current='Invalid credentials'; 
-      setOpen(true);
+      //popMessage.current='Invalid credentials'; 
+      //setOpen(true);
     } else if (forgottenAcc){
       //refresh token
       const result = async () => {

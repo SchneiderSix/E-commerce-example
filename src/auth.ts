@@ -41,7 +41,24 @@ const getUser = async (email: string): Promise<{email: string, password: string,
 }
 
 export const authOptions: NextAuthOptions = {
-  secret: secret,
+  // Log the environment variables
+  debug: true,
+  logger: {
+    error(code, ...message) {
+      console.error(code, ...message)
+    },
+    warn(code, ...message) {
+      console.warn(code, ...message)
+    },
+    debug(code, ...message) {
+      if (code === 'configuration') {
+        console.log('NEXTAUTH_URL', process.env.NEXTAUTH_URL as string)
+        console.log('NEXTAUTH_SECRET', process.env.NEXTAUTH_SECRET as string)
+        // Log other environment variables here...
+      }
+    },
+  },
+  secret: process.env.NEXTAUTH_SECRET as string,
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -62,7 +79,6 @@ export const authOptions: NextAuthOptions = {
 
         //check user's status
         const status = await getStatus(credentials.email);
-
         //check if user has already a session return null
         const existingSession = await getSession({req});
         if (existingSession?.user?.email === credentials.email) {
@@ -73,7 +89,6 @@ export const authOptions: NextAuthOptions = {
         if (status === false) {
           return null;
         }
-
         //if password comparation is true
         //save the user id into email property from User interface
         return passMatched ? {id: user.id, name: user.name, email: user.email, } as User: null;
