@@ -47,8 +47,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - [x] Proper transaction
 - [x] Webhook handling for stripe session completion
 - [x] Implement session handling for the shopping cart
-- [ ] Create checkout completion page
-- [ ] Create account validation page
+- [x] Create checkout completion page
+- [x] Create account validation page
 - [ ] Search products
 - [ ] Implement admin privileges
 
