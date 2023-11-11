@@ -47,8 +47,8 @@ export default function Login() {
         redirect: false
       });
       //open popup
-      //popMessage.current='Invalid credentials'; 
-      //setOpen(true);
+      popMessage.current='Invalid credentials'; 
+      setOpen(true);
     } else if (forgottenAcc){
       //refresh token
       const result = async () => {

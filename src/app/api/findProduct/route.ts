@@ -23,13 +23,11 @@ export async function GET(
   const reqMinPage = headers().get('minPage');
   const reqMaxPage = headers().get('maxPage');
 
-  if (!reqTitle || !reqMinPage || !reqMaxPage) return NextResponse.json({message: 'Invalid parameters'}, {status: 403});
+  if (!reqMinPage || !reqMaxPage) return NextResponse.json({message: 'Invalid parameters'}, {status: 403});
 
   if(
-    !validator.isEmpty(reqTitle) &&
     !validator.isEmpty(reqMinPage) &&
     !validator.isEmpty(reqMaxPage) &&
-    validator.isAlphanumeric(reqTitle) &&
     validator.isNumeric(reqMinPage) &&
     validator.isNumeric(reqMaxPage)
   ) {

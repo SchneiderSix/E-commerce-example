@@ -3,30 +3,35 @@ import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import cart from "../../../public/shopping-cart.png";
 import cart2 from "../../../public/shopping-cart2.png";
-import { useRef, useState, lazy } from "react";
+import { useRef, useState, lazy, useDeferredValue, Suspense } from "react";
 import Foxy from "../Foxy/Foxy";
+import ProductContainer from "../ProductContainer/ProductContainer";
+import { Pulsar } from "@uiball/loaders";
 const Cart = lazy(() => import("../Cart/Cart"));
 
 
 export default function Header() {
   //user session
   const {data: session, status} = useSession();
-  //searchTerm ref
-  const searchTerm = useRef<HTMLInputElement>(null);
+  //searchTerm state
+  const [searchTerm, setSearchTerm ] = useState<string>('');
+  //deferred search term to reduce re-renders
+  const deferredSearchTerm = useDeferredValue(searchTerm);
   //state for cart
   const [showCart, setShowcart] = useState<boolean>(false);
   return (
-    <>
-      <div className="flex justify-center space-x-20 absolute mx-auto w-4/5 inset-x-0 left-/2 top-10 bg-white rounded-full px-7 overflow-hidden">
-        <div className="">
+    <div className="flex flex-col w-2/3 h-screen">
+      <div className="flex justify-center space-x-20 mx-auto w-4/5 top-10 bg-white rounded-full px-7 overflow-hidden">
+        <div className="mt-2">
           <Foxy />
         </div>
         <input
-        className="m-2 block w-full p-6 bg-white border border-slate-300 rounded-md text-lg shadow-sm placeholder-slate-400
-        focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+        className={`m-2 block w-full p-6 bg-white border border-slate-300 rounded-md text-lg shadow-sm placeholder-slate-400
+        focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 ${searchTerm === deferredSearchTerm ? 'font-bold' : ''}`}
         type="text"
         placeholder="Search..."
-        ref={searchTerm}
+        value={searchTerm}
+        onChange={e => setSearchTerm(e.target.value)}
         />
         <h1 className="m-2 inline-block align-middle text-black text-2xl font-bold">{session?.user.name}</h1>
         {session?.user.shoppingList?.length ? 
@@ -44,11 +49,14 @@ export default function Header() {
       </div>
       {showCart && (
           <div
-          className="dropdown absolute transform translate-y-0 transition-transform ease-in-out duration-300"
+          className="absolute p-28"
           >
             <Cart />
           </div>
-        )}
-    </>
+      )}
+      <div className="w-1/3 mx-auto">
+        <ProductContainer searchTerm={deferredSearchTerm} />
+      </div>
+    </div>
   )
 }
