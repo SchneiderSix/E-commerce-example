@@ -57,19 +57,29 @@ export default function Cart(props: {currentProduct?: Product}) {
       
       if (session?.user.shoppingList) {
         //change product quantity if it's already in shoplist
-        const updatedshoppingList = session!.user.shoppingList.map((product) => {
-          if (Object.keys(product)[0] === productId) {
-            Object.values(product)[0].quantity = parseInt(quantityRef.current?.value as string);
-          }
-          return product;
-        });
-        await update({
-          ...session,
-          user: {
-            ...session!.user,
-            shoppingList: updatedshoppingList
-          }
-        });
+        //check if product isn't in shopping list
+        const productFound = session.user.shoppingList.find((product, idx) => {
+          return Object.keys(product)[0] === productId;
+        })
+        //push item if the items isn't in shopping list
+        if (productFound === undefined) {
+          session.user.shoppingList.push(lastProduct);
+          //change product quantity
+        } else {
+          const updatedshoppingList = session!.user.shoppingList.map((product, idx) => {
+            if (Object.keys(product)[0] === productId) {
+              Object.values(product)[0].quantity = parseInt(quantityRef.current?.value as string);
+            }
+            return product;
+          });
+          await update({
+            ...session,
+            user: {
+              ...session!.user,
+              shoppingList: updatedshoppingList
+            }
+          });
+        }
       } else {
         await update({
           ...session,
