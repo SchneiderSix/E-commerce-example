@@ -11,7 +11,7 @@
 
 This is a guide about how to create a simple e-commerce using Next.js, AWS S3, MySQL, NextAuth.js, MySQL, email verification, React and Stripe gateway. This guide is 100% educational, for example auxiliary functions are in the same file where are used for better understanding (in real projects you put all your axuliary functions in the same folder/file) or use another approach to validate API calls. This e-commerce is supposed to be a simple Business-to-Consumer (B2C). Once completed, I will share a MySQL dump and provide guidance on the structure of the 'credentials.ts' file.
 <br></br>
-<b>Current state: on going</b>
+<b>Current state: finished</b>
 
 ## Usage
 
@@ -49,8 +49,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - [x] Implement session handling for the shopping cart
 - [x] Create checkout completion page
 - [x] Create account validation page
-- [ ] Search products
-- [ ] Implement admin privileges
+- [x] Search products
+- [x] Implement admin privileges
 
 ## Contact
 
