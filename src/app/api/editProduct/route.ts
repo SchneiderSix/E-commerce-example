@@ -91,6 +91,7 @@ export async function POST(
     return NextResponse.json({message: 'Too many requests'}, {status: 429});
   }
   //headers validation
+  const reqProductId = headers().get('productId');
   const reqUserId = headers().get('id');
   const reqTitle = headers().get('title');
   const reqQuantity = headers().get('quantity');
@@ -98,7 +99,7 @@ export async function POST(
   const reqDescription = headers().get('description');
 
   //check if headers are null
-  if (!reqUserId || !reqTitle || !reqQuantity || !reqPrice || !reqDescription) {
+  if (!reqUserId || !reqTitle || !reqQuantity || !reqPrice || !reqDescription || !reqProductId) {
     return NextResponse.json({message: 'Invalid parameters'}, {status: 403});
   }
 
@@ -108,6 +109,7 @@ export async function POST(
     !validator.isEmpty(reqQuantity) && 
     !validator.isEmpty(reqPrice) && 
     !validator.isEmpty(reqDescription) &&
+    !validator.isEmpty(reqProductId) &&
     //unneccesary
     /*validator.isAlphanumeric(reqUserId) && 
     validator.isAlphanumeric(reqTitle) && 
@@ -150,19 +152,17 @@ export async function POST(
       if (urls.includes(null) ) {
         return NextResponse.json({message: 's3 upload failed'}, {status: 409});
       } else {
-        //create random id
-        const productId = Date.now().toString(36)+Math.random().toString(36).substring(2, 8)+uid(33);
         //mysql connection
         const promisePool = pool.promise();
-        const query = "INSERT INTO `db-ticket`.`product`(`id`, `title`, `userId`, `quantity`, `price`, `image`, `description`) VALUES (?, ?, ?, ?, ?, ?, ?);";
+        const query = "UPDATE `db-ticket`.`product` SET `title` = ?, `userId` = ?, `quantity` = ?, `price` = ?, `image` = ?, `description`= ? WHERE `db-ticket`.`product`.`id` = ?;";
         const [rows, fields] = await promisePool.query<ResultSetHeader>(query, [
-          productId,
           reqTitle,
           reqUserId,
           reqQuantity,
           reqPrice,
           JSON.stringify(urls),
-          reqDescription
+          reqDescription,
+          reqProductId
         ]);
 
         if (rows.affectedRows === 1) {

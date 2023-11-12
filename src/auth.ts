@@ -90,6 +90,7 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
         //if password comparation is true
+        console.log(user)
         //save the user id into email property from User interface
         return passMatched ? {id: user.id, name: user.name, email: user.email, } as User: null;
        } else {
@@ -112,6 +113,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         return {
           ...token,
+          uid: user.id,
           name: user.name,
           email: user.email,
           shoppingList: user.shoppingList
@@ -124,6 +126,7 @@ export const authOptions: NextAuthOptions = {
         ...session,
         user: {
           ...session.user,
+          id: token.uid,
           shoppingList: token.shoppingList
         }
       }

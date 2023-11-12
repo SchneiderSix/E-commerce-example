@@ -12,6 +12,7 @@ interface ProductSearched {
 
 import { useEffect, useRef, useState } from "react";
 import Product from "../Product/Product";
+import { Pulsar } from "@uiball/loaders";
 
 export default function ProductContainer(props: {searchTerm?: string}) {
 
@@ -68,6 +69,11 @@ export default function ProductContainer(props: {searchTerm?: string}) {
           Next
         </button>
       </div>
+      {data === null ? 
+      <div className="flex items-center justify-center h-screen">
+        <Pulsar size={80} speed={1.75} color="black" />
+      </div>
+      : ''}
       {data && data.map((i) => <Product key={i.id} item={i} />)}
     </>
   )

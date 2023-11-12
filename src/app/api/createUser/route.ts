@@ -90,6 +90,9 @@ export async function POST(
   if (!reqEmail || !reqPass || !reqName) {
     return NextResponse.json({message: 'Invalid parameters'}, {status: 403});
   }
+
+  //check if name contains admin
+  if (reqName.includes('admin')) return NextResponse.json({message: 'Choose another name'}, {status: 403});
   
   if(
     !validator.isEmpty(reqEmail) && 
